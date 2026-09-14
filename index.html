@@ -1,0 +1,1054 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#123c3a" />
+    <meta name="description" content="A private, guided Grade 8 Environment and Sustainability science fair planner." />
+    <title>Grade 8 Sustainability Science Fair Planner</title>
+    <style>
+:root {
+  --ink: #173b3a;
+  --muted: #657673;
+  --green: #19715f;
+  --green-dark: #105549;
+  --mint: #e7f4ed;
+  --mint-2: #f3faf6;
+  --paper: #fffefa;
+  --canvas: #f3f0e7;
+  --line: #d9dfd8;
+  --amber: #e9a23b;
+  --amber-soft: #fff3d8;
+  --purple: #6756a8;
+  --purple-soft: #efebff;
+  --red: #b4483e;
+  --shadow: 0 18px 50px rgba(27, 67, 61, 0.1);
+  --radius: 22px;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 92% 5%, rgba(233, 162, 59, 0.12), transparent 25rem),
+    var(--canvas);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  line-height: 1.5;
+}
+
+button, input, select, textarea { font: inherit; }
+button { cursor: pointer; }
+
+.skip-link {
+  position: fixed;
+  z-index: 20;
+  left: 1rem;
+  top: -5rem;
+  padding: 0.7rem 1rem;
+  color: white;
+  background: var(--ink);
+  border-radius: 10px;
+}
+.skip-link:focus { top: 1rem; }
+
+.topbar {
+  min-height: 88px;
+  padding: 1rem clamp(1rem, 3vw, 3.5rem);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: rgba(255, 254, 250, 0.92);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(12px);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.brand { display: flex; align-items: center; gap: 0.9rem; }
+.brand h1 { margin: 0; font: 700 clamp(1.15rem, 2vw, 1.55rem)/1.1 Georgia, serif; }
+.eyebrow { margin: 0 0 0.2rem; color: var(--green); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; }
+
+.brand-mark {
+  width: 48px;
+  height: 48px;
+  position: relative;
+  border-radius: 15px;
+  background: var(--mint);
+  overflow: hidden;
+}
+.leaf { position: absolute; display: block; width: 16px; height: 24px; background: var(--green); border-radius: 100% 0 100% 0; }
+.leaf-one { left: 11px; top: 10px; transform: rotate(-28deg); }
+.leaf-two { left: 23px; top: 9px; transform: scaleX(-1) rotate(-28deg); background: #5aa879; }
+.stem { position: absolute; left: 23px; bottom: 7px; width: 2px; height: 20px; background: var(--green-dark); transform: rotate(2deg); }
+
+.top-actions { display: flex; align-items: center; gap: 0.85rem; }
+.save-state { font-size: 0.79rem; color: var(--muted); white-space: nowrap; }
+.save-dot { display: inline-block; width: 8px; height: 8px; margin-right: 0.35rem; border-radius: 50%; background: #4baa6d; }
+.save-state.saving .save-dot { background: var(--amber); }
+
+.button {
+  border: 0;
+  border-radius: 12px;
+  padding: 0.72rem 1rem;
+  font-weight: 750;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+.button:hover { transform: translateY(-1px); }
+.button:focus-visible, .step-button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+  outline: 3px solid rgba(25, 113, 95, 0.26);
+  outline-offset: 2px;
+}
+.button-primary { color: white; background: var(--green); box-shadow: 0 8px 20px rgba(25, 113, 95, 0.2); }
+.button-primary:hover { background: var(--green-dark); }
+.button-quiet { color: var(--ink); background: #fff; border: 1px solid var(--line); }
+.button-danger { color: var(--red); background: #fff; border: 1px solid #e8c5c1; }
+.button-small { padding: 0.45rem 0.7rem; font-size: 0.82rem; }
+.button[disabled] { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+.app-shell {
+  width: min(1320px, calc(100% - 2rem));
+  margin: 1.5rem auto 3rem;
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.journey-panel { position: sticky; top: 112px; }
+.progress-card, .privacy-note, .planner-card, .stage-banner { background: var(--paper); border: 1px solid var(--line); box-shadow: var(--shadow); }
+.progress-card { padding: 1rem; border-radius: 18px 18px 10px 10px; }
+.progress-copy { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; }
+.progress-copy p:last-child { margin: 0; font-size: 0.85rem; color: var(--muted); }
+.progress-copy strong { color: var(--ink); font-size: 1.15rem; }
+.progress-track { height: 8px; margin: 0.75rem 0 0.6rem; overflow: hidden; border-radius: 99px; background: #e2e8e3; }
+.progress-track span { display: block; width: 0; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #43a477, var(--green)); transition: width 0.3s ease; }
+.progress-note { min-height: 2.4em; margin: 0; color: var(--muted); font-size: 0.78rem; }
+
+.step-nav { margin-top: 0.6rem; max-height: calc(100vh - 340px); overflow: auto; padding-right: 0.25rem; }
+.step-button {
+  width: 100%;
+  min-height: 48px;
+  display: grid;
+  grid-template-columns: 31px 1fr auto;
+  gap: 0.7rem;
+  align-items: center;
+  padding: 0.55rem 0.7rem;
+  color: var(--ink);
+  text-align: left;
+  background: transparent;
+  border: 0;
+  border-left: 3px solid transparent;
+  border-radius: 9px;
+}
+.step-button:hover { background: rgba(255,255,255,0.55); }
+.step-button.active { background: #fff; border-left-color: var(--green); box-shadow: 0 5px 18px rgba(27,67,61,0.08); }
+.step-button.locked { color: #8c9895; }
+.step-number { display: grid; place-items: center; width: 29px; height: 29px; border-radius: 50%; background: #e5e9e5; font-size: 0.75rem; font-weight: 800; }
+.step-button.complete .step-number { color: white; background: var(--green); }
+.step-button.active .step-number { color: white; background: var(--ink); }
+.step-name { font-size: 0.84rem; font-weight: 720; line-height: 1.2; }
+.step-status { font-size: 0.76rem; }
+.step-button.approval .step-number { color: var(--purple); background: var(--purple-soft); }
+.step-button.approval.active { border-left-color: var(--purple); }
+
+.privacy-note { display: flex; gap: 0.65rem; margin-top: 0.65rem; padding: 0.75rem 0.9rem; border-radius: 10px 10px 18px 18px; color: var(--muted); font-size: 0.76rem; box-shadow: none; }
+.privacy-note > span { color: var(--green); }
+
+.workspace { min-width: 0; }
+.stage-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 74px;
+  margin-bottom: 0.75rem;
+  padding: 0.9rem 1.2rem;
+  border-radius: 18px;
+  color: white;
+  background: linear-gradient(125deg, var(--ink), #225f59);
+  overflow: hidden;
+  position: relative;
+}
+.stage-banner::after { content: ""; position: absolute; right: -20px; top: -45px; width: 170px; height: 170px; border: 25px solid rgba(255,255,255,0.06); border-radius: 50%; }
+.stage-banner p { position: relative; z-index: 1; margin: 0; }
+.stage-banner .stage-title { font: 700 1.05rem Georgia, serif; }
+.stage-banner .stage-meta { font-size: 0.76rem; color: #cae3db; }
+.stage-banner.approval { background: linear-gradient(125deg, #443c76, var(--purple)); }
+
+.planner-card { min-height: 610px; padding: clamp(1.2rem, 3vw, 2.4rem); border-radius: var(--radius); }
+.step-heading { max-width: 780px; margin-bottom: 1.7rem; }
+.step-heading h2 { margin: 0.15rem 0 0.55rem; font: 700 clamp(1.8rem, 3vw, 2.65rem)/1.08 Georgia, serif; letter-spacing: -0.025em; }
+.step-heading p { margin: 0; color: var(--muted); font-size: 1rem; }
+.step-chip { display: inline-flex; align-items: center; gap: 0.35rem; color: var(--green); font-size: 0.75rem; font-weight: 850; letter-spacing: 0.09em; text-transform: uppercase; }
+
+.guide-card { display: flex; align-items: flex-start; gap: 0.8rem; margin-bottom: 1.4rem; padding: 1rem; border: 1px solid #cfe3d8; border-radius: 15px; background: var(--mint-2); }
+.guide-icon { display: grid; place-items: center; flex: 0 0 34px; height: 34px; border-radius: 10px; color: white; background: var(--green); font-weight: 900; }
+.guide-card p { margin: 0; color: #385c56; font-size: 0.88rem; }
+.guide-card strong { color: var(--ink); }
+
+.form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.field { display: block; }
+.field.full { grid-column: 1 / -1; }
+.field-label { display: block; margin-bottom: 0.25rem; color: var(--ink); font-size: 0.88rem; font-weight: 780; }
+.field-label .required { color: var(--red); }
+.field-help { display: block; min-height: 1.15rem; margin-bottom: 0.4rem; color: var(--muted); font-size: 0.75rem; }
+input[type="text"], input[type="date"], input[type="number"], select, textarea {
+  width: 100%;
+  color: var(--ink);
+  background: #fff;
+  border: 1.5px solid #cad4ce;
+  border-radius: 11px;
+  padding: 0.72rem 0.8rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+textarea { resize: vertical; min-height: 92px; }
+input:hover, textarea:hover, select:hover { border-color: #97aca4; }
+.field.missing input, .field.missing textarea, .field.missing select { border-color: var(--red); background: #fffafa; }
+.field-error { display: none; margin-top: 0.3rem; color: var(--red); font-size: 0.73rem; }
+.field.missing .field-error { display: block; }
+
+.choice-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.65rem; }
+.choice-card { position: relative; }
+.choice-card input { position: absolute; opacity: 0; pointer-events: none; }
+.choice-card span { min-height: 78px; display: flex; align-items: center; justify-content: center; padding: 0.75rem; text-align: center; border: 1.5px solid var(--line); border-radius: 12px; background: #fff; font-size: 0.82rem; font-weight: 720; }
+.choice-card input:checked + span { color: var(--green-dark); border-color: var(--green); background: var(--mint); box-shadow: inset 0 0 0 1px var(--green); }
+
+.checklist { display: grid; gap: 0.55rem; }
+.check-row { display: flex; align-items: flex-start; gap: 0.65rem; padding: 0.75rem; border: 1px solid var(--line); border-radius: 11px; background: #fff; }
+.check-row input { width: 18px; height: 18px; margin-top: 0.1rem; accent-color: var(--green); }
+.check-row span { font-size: 0.84rem; }
+
+.checkpoint-box { margin-top: 1.5rem; padding: 1rem; border: 1px dashed #abc3b8; border-radius: 14px; background: #fbfdfb; }
+.checkpoint-box h3 { margin: 0 0 0.3rem; font-size: 0.9rem; }
+.checkpoint-box p { margin: 0 0 0.7rem; color: var(--muted); font-size: 0.8rem; }
+.checkpoint-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+
+.topic-path {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.7rem;
+  margin-bottom: 1rem;
+}
+.topic-path > div {
+  min-height: 128px;
+  padding: 0.9rem;
+  border: 1px solid #cfe0d6;
+  border-radius: 14px;
+  background: linear-gradient(150deg, #fff, var(--mint-2));
+}
+.topic-path span {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin-bottom: 0.55rem;
+  border-radius: 9px;
+  color: white;
+  background: var(--green);
+  font-size: 0.76rem;
+  font-weight: 850;
+}
+.topic-path strong { font-size: 0.76rem; letter-spacing: 0.08em; }
+.topic-path p { margin: 0.3rem 0 0; color: var(--muted); font-size: 0.76rem; }
+
+.starter-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.55rem; }
+.starter-grid button {
+  min-height: 48px;
+  padding: 0.6rem;
+  color: var(--green-dark);
+  text-align: left;
+  border: 1px solid #bcd6c8;
+  border-radius: 10px;
+  background: var(--mint-2);
+  font-size: 0.78rem;
+  font-weight: 750;
+}
+.starter-grid button:hover { background: var(--mint); border-color: var(--green); }
+
+.display-board-preview {
+  display: grid;
+  grid-template-columns: 0.9fr 1.2fr 0.9fr;
+  gap: 0.55rem;
+  align-items: stretch;
+  margin: 0 0 1rem;
+  padding: 1rem;
+  border-radius: 16px;
+  background: #e9e4d8;
+  box-shadow: inset 0 0 0 1px #d7d0c2;
+}
+.board-panel {
+  min-height: 190px;
+  padding: 1rem;
+  border: 1px solid #c8d2cc;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 7px 14px rgba(28, 54, 50, 0.08);
+}
+.board-center { min-height: 220px; border-top: 7px solid var(--green); }
+.board-left { border-top: 7px solid var(--amber); }
+.board-right { border-top: 7px solid var(--purple); }
+.board-panel span { color: var(--muted); font-size: 0.62rem; font-weight: 850; letter-spacing: 0.09em; }
+.board-panel strong { display: block; margin: 0.55rem 0; font: 700 1rem Georgia, serif; }
+.board-center strong { font-size: 1.2rem; text-align: center; }
+.board-panel p { margin: 0; color: #50635f; font-size: 0.76rem; white-space: pre-wrap; }
+
+.display-rules { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.65rem; margin: 0 0 1.3rem; }
+.display-rules div { padding: 0.75rem; border-radius: 11px; background: #f5f7f4; }
+.display-rules strong { display: block; color: var(--green-dark); font-size: 0.8rem; }
+.display-rules span { color: var(--muted); font-size: 0.72rem; }
+
+.approval-roadmap { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 0.75rem; margin-bottom: 1.2rem; }
+.approval-phase { padding: 1rem; border: 1px solid var(--line); border-radius: 14px; background: #fff; }
+.approval-phase.done { border-color: #9ac8ad; background: var(--mint-2); }
+.approval-phase.current { border-color: #a89cd6; background: var(--purple-soft); }
+.phase-number { display: grid; place-items: center; width: 28px; height: 28px; margin-bottom: 0.6rem; border-radius: 50%; color: white; background: #8d9894; font-size: 0.75rem; font-weight: 850; }
+.approval-phase.done .phase-number { background: var(--green); }
+.approval-phase.current .phase-number { background: var(--purple); }
+.approval-phase h3 { margin: 0 0 0.25rem; font-size: 0.88rem; }
+.approval-phase p { margin: 0; color: var(--muted); font-size: 0.75rem; }
+
+.readiness-panel { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 1rem; }
+.readiness-list, .teacher-box { padding: 1rem; border-radius: 15px; border: 1px solid var(--line); background: #fff; }
+.readiness-list h3, .teacher-box h3 { margin: 0 0 0.7rem; font: 700 1.1rem Georgia, serif; }
+.ready-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.46rem 0; border-bottom: 1px solid #edf0ed; font-size: 0.8rem; }
+.ready-row:last-child { border-bottom: 0; }
+.ready-tag { flex: 0 0 auto; color: var(--red); font-weight: 800; }
+.ready-row.done .ready-tag { color: var(--green); }
+.teacher-box { border: 2px solid #c4bae9; background: #faf8ff; }
+.teacher-box.locked { opacity: 0.62; }
+.teacher-box .field { margin-bottom: 0.75rem; }
+.approval-status { margin: 0.75rem 0 0; padding: 0.75rem; border-radius: 10px; background: var(--amber-soft); color: #70501d; font-size: 0.8rem; font-weight: 750; }
+.approval-status.approved { color: #165f4c; background: var(--mint); }
+.approval-status.revision { color: #843e36; background: #fbe8e5; }
+
+.data-table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 13px; }
+.data-table { width: 100%; border-collapse: collapse; min-width: 650px; background: #fff; }
+.data-table th, .data-table td { padding: 0.65rem; border-bottom: 1px solid var(--line); text-align: left; }
+.data-table th { color: #4d625e; background: #f2f6f3; font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.05em; }
+.data-table input { min-width: 82px; padding: 0.5rem; }
+.data-table td:last-child { text-align: center; font-weight: 800; }
+.data-actions { display: flex; justify-content: space-between; gap: 1rem; align-items: center; margin-top: 0.75rem; }
+.average-note { color: var(--muted); font-size: 0.76rem; }
+
+.locked-stage { max-width: 580px; margin: 3rem auto; text-align: center; }
+.lock-symbol { display: grid; place-items: center; width: 66px; height: 66px; margin: 0 auto 1rem; border-radius: 20px; color: var(--purple); background: var(--purple-soft); font-size: 1.8rem; }
+.locked-stage h2 { margin: 0 0 0.4rem; font: 700 1.8rem Georgia, serif; }
+.locked-stage p { color: var(--muted); }
+
+.workspace-footer { display: grid; grid-template-columns: 1fr minmax(0, 2fr) 1fr; gap: 0.75rem; align-items: center; margin-top: 0.8rem; }
+.workspace-footer > :last-child { justify-self: end; }
+.footer-center { text-align: center; color: var(--muted); font-size: 0.78rem; }
+.footer-center.success { color: var(--green); font-weight: 760; }
+.footer-center.error { color: var(--red); font-weight: 760; }
+
+.mini-summary { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 0.7rem; margin-top: 1rem; }
+.summary-cell { padding: 0.8rem; border-radius: 11px; background: #f5f7f4; }
+.summary-cell span { display: block; margin-bottom: 0.2rem; color: var(--muted); font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; }
+.summary-cell p { margin: 0; font-size: 0.82rem; white-space: pre-wrap; }
+
+.print-summary { display: none; }
+
+@media (max-width: 900px) {
+  .topbar { position: static; }
+  .save-state { display: none; }
+  .app-shell { grid-template-columns: 1fr; width: min(100% - 1rem, 760px); }
+  .journey-panel { position: static; }
+  .step-nav { display: flex; overflow-x: auto; max-height: none; padding: 0.4rem 0; }
+  .step-button { flex: 0 0 145px; grid-template-columns: 28px 1fr; border-left: 0; border-bottom: 3px solid transparent; }
+  .step-button.active { border-bottom-color: var(--green); }
+  .step-status { display: none; }
+  .privacy-note { display: none; }
+  .planner-card { min-height: 0; }
+}
+
+@media (max-width: 650px) {
+  .topbar { align-items: flex-start; }
+  .top-actions { padding-top: 0.1rem; }
+  .button { padding: 0.68rem 0.8rem; }
+  .form-grid, .readiness-panel, .approval-roadmap, .mini-summary, .topic-path, .starter-grid, .display-rules { grid-template-columns: 1fr; }
+  .display-board-preview { grid-template-columns: 1fr; }
+  .board-panel, .board-center { min-height: 145px; }
+  .choice-grid { grid-template-columns: 1fr; }
+  .workspace-footer { grid-template-columns: 1fr 1fr; }
+  .footer-center { grid-column: 1 / -1; grid-row: 1; }
+  .workspace-footer > :last-child { justify-self: stretch; }
+  .workspace-footer > :first-child { justify-self: stretch; }
+  .brand-mark { display: none; }
+  .brand .eyebrow { font-size: 0.61rem; }
+}
+
+@media print {
+  @page { margin: 14mm; }
+  body { background: white; color: #172d2b; font-size: 10pt; }
+  .topbar, .app-shell, .skip-link { display: none !important; }
+  .print-summary { display: block; }
+  .print-header { display: flex; justify-content: space-between; align-items: flex-end; padding-bottom: 8mm; border-bottom: 3px solid #173b3a; }
+  .print-header h1 { margin: 0; font: 700 22pt Georgia, serif; }
+  .print-header p { margin: 0; color: #546965; }
+  .print-meta { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm; margin: 6mm 0; }
+  .print-meta div, .print-section { break-inside: avoid; }
+  .print-meta span, .print-section h2 { color: #19715f; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; font-size: 8pt; }
+  .print-meta strong { display: block; margin-top: 1mm; }
+  .print-section { margin: 5mm 0; padding-bottom: 4mm; border-bottom: 1px solid #cad4ce; }
+  .print-section h2 { margin: 0 0 2mm; }
+  .print-section p { margin: 1.5mm 0; white-space: pre-wrap; }
+  .print-label { font-weight: 800; }
+  .print-approval { padding: 5mm; border: 2px solid #6756a8; }
+  .print-signature { display: grid; grid-template-columns: 1fr 1fr; gap: 12mm; margin-top: 10mm; }
+  .signature-line { padding-top: 2mm; border-top: 1px solid #172d2b; }
+  .print-display-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm; margin: 8mm 0; }
+  .print-display-grid section { min-height: 75mm; padding: 5mm; border: 1.5px solid #173b3a; break-inside: avoid; }
+  .print-display-grid h2 { margin: 0 0 4mm; color: #19715f; font-size: 9pt; text-transform: uppercase; }
+  .print-display-grid p { white-space: pre-wrap; }
+}
+
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#workspace">Skip to planner</a>
+
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <span class="leaf leaf-one"></span>
+          <span class="leaf leaf-two"></span>
+          <span class="stem"></span>
+        </div>
+        <div>
+          <p class="eyebrow">Grade 8 · Environment & Sustainability</p>
+          <h1>Science Fair Planner</h1>
+        </div>
+      </div>
+
+      <div class="top-actions">
+        <span class="save-state" id="saveState" role="status"><span class="save-dot"></span> Saved on this device</span>
+        <button class="button button-quiet" id="printButton" type="button">Print / Save PDF</button>
+      </div>
+    </header>
+
+    <main class="app-shell">
+      <section class="journey-panel" aria-label="Project journey">
+        <div class="progress-card">
+          <div class="progress-copy">
+            <p class="eyebrow">Your journey</p>
+            <p><strong id="progressPercent">0%</strong> ready</p>
+          </div>
+          <div class="progress-track" aria-label="Project completion">
+            <span id="progressBar"></span>
+          </div>
+          <p class="progress-note" id="progressNote">Start by choosing a real environmental problem you care about.</p>
+        </div>
+
+        <nav class="step-nav" id="stepNav" aria-label="Planner checkpoints"></nav>
+
+        <aside class="privacy-note">
+          <span aria-hidden="true">●</span>
+          <div><strong>Private working copy</strong><br />Your answers auto-save only in this browser.</div>
+        </aside>
+      </section>
+
+      <section class="workspace" id="workspace" aria-live="polite">
+        <div class="stage-banner" id="stageBanner"></div>
+        <article class="planner-card" id="plannerCard"></article>
+        <div class="workspace-footer">
+          <button class="button button-quiet" id="backButton" type="button">← Back</button>
+          <div class="footer-center" id="footerMessage" role="status"></div>
+          <button class="button button-primary" id="nextButton" type="button">Next checkpoint →</button>
+        </div>
+      </section>
+    </main>
+
+    <section id="printSummary" class="print-summary" aria-hidden="true"></section>
+
+    <template id="fieldTemplate">
+      <label class="field">
+        <span class="field-label"></span>
+        <span class="field-help"></span>
+        <textarea rows="3"></textarea>
+      </label>
+    </template>
+
+    <script>
+const STORAGE_KEY = "grade8-sustainability-planner-v2";
+
+const steps = [
+  { id: "topic", title: "Choose a topic", stage: "Explore", icon: "01", required: ["sustainabilityArea", "possibleTopics", "selectedTopic", "topicReason", "topicFeasible"] },
+  { id: "problem", title: "Environmental problem", stage: "Discover", icon: "02", required: ["studentName", "projectTitle", "problemStatement", "localConnection"] },
+  { id: "research", title: "Background research", stage: "Discover", icon: "03", required: ["researchFacts", "sources", "researchGap"] },
+  { id: "question", title: "Testable question", stage: "Focus", icon: "04", required: ["testableQuestion", "questionIV", "questionDV"] },
+  { id: "hypothesis", title: "Hypothesis", stage: "Focus", icon: "05", required: ["hypothesis", "scienceReason"] },
+  { id: "variables", title: "Variables & control", stage: "Plan", icon: "06", required: ["independentVariable", "ivLevels", "dependentVariable", "dvUnit", "constants", "controlGroup"] },
+  { id: "design", title: "Investigation design", stage: "Plan", icon: "07", required: ["materials", "procedure", "measurementTool", "sampleSize", "durationLocation"] },
+  { id: "trials", title: "Repeated trials", stage: "Plan", icon: "08", required: ["trialCount", "repeatReason", "consistencyPlan"] },
+  { id: "safety", title: "Safety & responsibility", stage: "Plan", icon: "09", required: ["risks", "precautions", "disposal", "livingThings"] },
+  { id: "approval", title: "Proposal approval", stage: "Approval gate", icon: "10", required: ["studentAttestation"] },
+  { id: "data", title: "Collect data", stage: "Investigate", icon: "11", required: ["dataObservations"] },
+  { id: "analysis", title: "Analyze results", stage: "Explain", icon: "12", required: ["mainPattern", "numberEvidence", "graphPlan", "limitations"] },
+  { id: "finish", title: "Conclusion", stage: "Communicate", icon: "13", required: ["claimConclusion", "hypothesisResult", "scienceExplanation", "improvements", "realWorldConnection"] },
+  { id: "display", title: "Plan the display board", stage: "Present", icon: "14", required: ["finalDisplayTitle", "keyMessage", "leftPanelPlan", "centerPanelPlan", "rightPanelPlan", "visualEvidence", "displayReady"] }
+];
+
+const initialState = {
+  currentStep: 0,
+  fields: {
+    trialCount: "3",
+    teacherDecision: "Pending",
+    livingThings: "No",
+    hypothesisResult: "",
+    classSection: "Grade 8"
+  },
+  dataRows: [
+    { condition: "", trials: ["", "", ""] },
+    { condition: "", trials: ["", "", ""] }
+  ],
+  updatedAt: null
+};
+
+let state = loadState();
+const nav = document.getElementById("stepNav");
+const planner = document.getElementById("plannerCard");
+const banner = document.getElementById("stageBanner");
+const backButton = document.getElementById("backButton");
+const nextButton = document.getElementById("nextButton");
+const footerMessage = document.getElementById("footerMessage");
+const saveState = document.getElementById("saveState");
+
+function loadState() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (!saved || !saved.fields) return structuredClone(initialState);
+    return {
+      ...structuredClone(initialState),
+      ...saved,
+      fields: { ...initialState.fields, ...saved.fields },
+      dataRows: Array.isArray(saved.dataRows) && saved.dataRows.length ? saved.dataRows : structuredClone(initialState.dataRows)
+    };
+  } catch (_) {
+    return structuredClone(initialState);
+  }
+}
+
+let saveTimer;
+function persist() {
+  state.updatedAt = new Date().toISOString();
+  saveState.classList.add("saving");
+  saveState.innerHTML = '<span class="save-dot"></span> Saving…';
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      saveState.classList.remove("saving");
+      saveState.innerHTML = '<span class="save-dot"></span> Saved on this device';
+    } catch (_) {
+      saveState.innerHTML = '<span class="save-dot"></span> Could not save';
+    }
+  }, 180);
+}
+
+function value(field) { return state.fields[field] ?? ""; }
+function filled(field) {
+  const v = value(field);
+  if (Array.isArray(v)) return v.length > 0;
+  const normalized = String(v).trim();
+  return normalized.length > 0 && normalized !== "Choose one…" && v !== false;
+}
+
+function stepComplete(step) {
+  if (step.id === "approval") return value("teacherDecision") === "Approved";
+  if (step.id === "data") return hasUsableData() && filled("dataObservations");
+  return step.required.every(filled);
+}
+
+function approvalStepIndex() { return steps.findIndex(step => step.id === "approval"); }
+function planningSteps() { return steps.slice(0, approvalStepIndex()); }
+function preApprovalReady() { return planningSteps().every(stepComplete); }
+function isApproved() { return value("teacherDecision") === "Approved"; }
+function isLocked(index) { return index > approvalStepIndex() && !isApproved(); }
+
+function completionCount() { return steps.filter(stepComplete).length; }
+
+function updateProgress() {
+  const complete = completionCount();
+  const percent = Math.round((complete / steps.length) * 100);
+  document.getElementById("progressPercent").textContent = `${percent}%`;
+  document.getElementById("progressBar").style.width = `${percent}%`;
+  const note = document.getElementById("progressNote");
+  if (isApproved()) note.textContent = "Proposal approved — your investigation stages are unlocked.";
+  else if (preApprovalReady()) note.textContent = "Planning complete — finish the proposal approval gate.";
+  else note.textContent = "Complete the planning checkpoints before collecting data.";
+}
+
+function renderNav() {
+  nav.innerHTML = steps.map((step, index) => {
+    const complete = stepComplete(step);
+    const locked = isLocked(index);
+    const classes = ["step-button", index === state.currentStep ? "active" : "", complete ? "complete" : "", locked ? "locked" : "", step.id === "approval" ? "approval" : ""].filter(Boolean).join(" ");
+    return `<button class="${classes}" data-step="${index}" type="button" ${locked ? 'aria-disabled="true"' : ""}>
+      <span class="step-number">${complete ? "✓" : step.icon}</span>
+      <span class="step-name">${escapeHTML(step.title)}</span>
+      <span class="step-status" aria-hidden="true">${locked ? "🔒" : complete ? "Done" : ""}</span>
+    </button>`;
+  }).join("");
+
+  nav.querySelectorAll("button").forEach(button => {
+    button.addEventListener("click", () => {
+      const index = Number(button.dataset.step);
+      if (isLocked(index)) {
+        setFooter("Teacher approval is required before data collection.", "error");
+        return;
+      }
+      state.currentStep = index;
+      persist();
+      render();
+      document.getElementById("workspace").scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  });
+}
+
+function renderBanner(step) {
+  banner.className = `stage-banner ${step.id === "approval" ? "approval" : ""}`;
+  banner.innerHTML = `<div><p class="stage-meta">STAGE · ${escapeHTML(step.stage)}</p><p class="stage-title">${escapeHTML(step.title)}</p></div><p class="stage-meta">Checkpoint ${state.currentStep + 1} of ${steps.length}</p>`;
+}
+
+function render() {
+  if (isLocked(state.currentStep)) state.currentStep = approvalStepIndex();
+  const step = steps[state.currentStep];
+  renderNav();
+  renderBanner(step);
+  updateProgress();
+  footerMessage.textContent = "";
+  footerMessage.className = "footer-center";
+
+  if (isLocked(state.currentStep)) planner.innerHTML = lockedHTML();
+  else planner.innerHTML = contentFor(step.id);
+
+  bindInputs();
+  bindSpecialActions();
+  backButton.disabled = state.currentStep === 0;
+  nextButton.disabled = state.currentStep === steps.length - 1;
+  nextButton.textContent = state.currentStep === approvalStepIndex() && !isApproved() ? "Approval required" : state.currentStep === steps.length - 1 ? "Planner complete" : "Next checkpoint →";
+  if (state.currentStep === approvalStepIndex() && !isApproved()) nextButton.disabled = true;
+}
+
+function heading(kicker, title, description) {
+  return `<header class="step-heading"><span class="step-chip">${kicker}</span><h2>${title}</h2><p>${description}</p></header>`;
+}
+
+function guide(title, text, symbol = "?") {
+  return `<div class="guide-card"><span class="guide-icon" aria-hidden="true">${symbol}</span><p><strong>${title}</strong><br>${text}</p></div>`;
+}
+
+function field(name, label, help, options = {}) {
+  const { full = false, type = "textarea", rows = 3, required = true, placeholder = "" } = options;
+  const req = required ? '<span class="required" aria-label="required"> *</span>' : "";
+  let control;
+  if (type === "select") {
+    control = `<select data-field="${name}">${options.choices.map(c => `<option value="${escapeAttr(c)}" ${value(name) === c ? "selected" : ""}>${escapeHTML(c)}</option>`).join("")}</select>`;
+  } else if (type === "text" || type === "date" || type === "number") {
+    control = `<input type="${type}" data-field="${name}" value="${escapeAttr(value(name))}" placeholder="${escapeAttr(placeholder)}" />`;
+  } else {
+    control = `<textarea data-field="${name}" rows="${rows}" placeholder="${escapeAttr(placeholder)}">${escapeHTML(value(name))}</textarea>`;
+  }
+  return `<label class="field ${full ? "full" : ""}" data-field-wrap="${name}"><span class="field-label">${label}${req}</span><span class="field-help">${help}</span>${control}<span class="field-error">Add an answer before approval.</span></label>`;
+}
+
+function checkpoint(question) {
+  return `<div class="checkpoint-box"><h3>Checkpoint</h3><p>${question}</p><div class="checkpoint-actions"><button class="button button-primary button-small" type="button" data-action="check-step">Check my step</button></div></div>`;
+}
+
+function contentFor(id) {
+  const sections = {
+    topic: () => `${heading("Begin with curiosity", "Choose a topic you can actually investigate", "The best topic connects something you care about with a local problem that can be measured safely in the time available.")}
+      <div class="topic-path" aria-label="Four steps for choosing a topic">
+        <div><span>1</span><strong>CARE</strong><p>Choose an environmental area that interests you.</p></div>
+        <div><span>2</span><strong>NOTICE</strong><p>Look for a problem at home, school, or nearby.</p></div>
+        <div><span>3</span><strong>TEST</strong><p>Ask what you could change and measure.</p></div>
+        <div><span>4</span><strong>CHECK</strong><p>Make sure it is safe, practical, and useful.</p></div>
+      </div>
+      ${guide("A topic is not yet a question", "Start with a broad interest such as water quality. Narrow it to a measurable topic such as how filtration material affects water turbidity. You will write the final question later.", "T")}
+      <div class="form-grid">
+        ${field("sustainabilityArea", "Which environmental area interests you most?", "Choose one area to explore first.", { type: "select", choices: ["Choose one…", "Water", "Waste & plastics", "Energy", "Food & agriculture", "Air quality", "Biodiversity", "Climate", "Materials & green chemistry", "Other"] })}
+        ${field("topicObservation", "What have you noticed?", "Think about waste, water, heat, energy use, plants, food, air, or materials around you.", { placeholder: "I have noticed that…", required: false })}
+        <div class="field full"><span class="field-label">Safe topic starters</span><span class="field-help">Select an idea to add it to your brainstorming box, then adapt it to your own setting.</span>
+          <div class="starter-grid">
+            <button type="button" data-topic-starter="How different filter materials affect water clarity">Water filtration</button>
+            <button type="button" data-topic-starter="How reusable and disposable materials compare in waste produced">Waste reduction</button>
+            <button type="button" data-topic-starter="How different insulation materials affect cooling rate">Energy & insulation</button>
+            <button type="button" data-topic-starter="How watering method affects water use and plant growth">Water-wise plants</button>
+            <button type="button" data-topic-starter="How compost mixture affects decomposition rate">Composting</button>
+            <button type="button" data-topic-starter="How surface color affects temperature in sunlight">Urban heat</button>
+          </div>
+        </div>
+        ${field("possibleTopics", "Brainstorm 3–5 possible topics", "List several ideas before choosing. Good scientists compare possibilities.", { full: true, rows: 5, placeholder: "1. …\n2. …\n3. …" })}
+        ${field("selectedTopic", "My selected topic", "Write one focused topic—not the final testable question yet.", { placeholder: "How filter material affects water clarity" })}
+        ${field("topicReason", "Why did you choose it?", "Explain your interest, local connection, and why the investigation would be useful.", { placeholder: "I chose this because…" })}
+        <div class="field full" data-field-wrap="topicFeasible"><span class="field-label">Topic feasibility check <span class="required">*</span></span><span class="field-help">Confirm every statement before continuing.</span>
+          <label class="check-row"><input type="checkbox" data-field="topicFeasible" ${value("topicFeasible") ? "checked" : ""}><span>My topic connects to Environment and Sustainability, can produce numerical data, can use at least three trials, is safe with teacher supervision, and can be completed with available time and materials.</span></label><span class="field-error">Complete the feasibility check before approval.</span>
+        </div>
+      </div>${checkpoint("Is your topic interesting, locally meaningful, measurable, safe, affordable, and possible to finish on time?")}`,
+
+    problem: () => `${heading("Start with why", "Find a problem worth investigating", "Choose a real environmental issue that connects to your community, school, home, or an ecosystem you know.")}
+      ${guide("Keep it specific", "“Water pollution” is broad. “Soap concentration in greywater may affect seed germination” gives you something you can investigate.", "1")}
+      <div class="selected-topic-strip"><span>Selected topic</span><strong>${escapeHTML(value("selectedTopic") || "Return to Checkpoint 1 to choose a topic")}</strong></div>
+      <div class="form-grid">
+        ${field("studentName", "Student name", "Use your full name.", { type: "text", placeholder: "Your name" })}
+        ${field("classSection", "Class / section", "Change this if needed.", { type: "text", required: false })}
+        ${field("projectTitle", "Working project title", "You can revise this later.", { type: "text", placeholder: "A short, clear title" })}
+        ${field("problemStatement", "What environmental problem did you notice?", "Describe the problem in 2–4 sentences.", { full: true, placeholder: "I noticed that…" })}
+        ${field("localConnection", "Where do you see it?", "Name a local place, situation, or group connected to the problem.", { placeholder: "At home, in school, in a canal, in our neighborhood…" })}
+        ${field("affectedGroup", "Who or what could be affected?", "People, organisms, resources, or ecosystems.", { required: false })}
+      </div>${checkpoint("Can someone who reads this understand the exact problem and why it matters locally?")}`,
+
+    research: () => `${heading("Build understanding", "Research before you design", "Good research helps you ask a fair, meaningful question and prevents unsafe or unscientific plans.")}
+      ${guide("Use trustworthy sources", "Look for science textbooks, government or university pages, scientific organizations, and expert-reviewed articles. Record enough information to find each source again.", "R")}
+      <div class="form-grid">
+        ${field("researchKeywords", "Search keywords", "List 3–6 useful search phrases.", { placeholder: "microplastics soil seed germination…", required: false })}
+        ${field("sources", "Sources used", "List at least 2 reliable sources with title and link or publication details.", { rows: 5, placeholder: "1. Title — organization — link\n2. Title — author — link" })}
+        ${field("researchFacts", "Important science facts", "Write at least 3 facts in your own words.", { full: true, rows: 5, placeholder: "1. …\n2. …\n3. …" })}
+        ${field("researchGap", "What do you still want to find out?", "This gap should lead toward your investigation.", { full: true, placeholder: "Research explains…, but I still want to know whether…" })}
+      </div>${checkpoint("Do your sources explain the science behind the problem—not only opinions about it?")}`,
+
+    question: () => `${heading("Make it testable", "Turn the problem into one focused question", "A testable question changes one factor, measures one result, and can be answered with data.")}
+      ${guide("Use this pattern", "How does [independent variable] affect [dependent variable] in/on [test system] when [important conditions] are kept the same?", "Q")}
+      <div class="form-grid">
+        ${field("questionIV", "What will you deliberately change?", "This is your independent variable (IV).", { placeholder: "Amount, type, concentration, temperature…" })}
+        ${field("questionDV", "What will you measure?", "This is your dependent variable (DV).", { placeholder: "Time, mass, growth, pH, temperature…" })}
+        ${field("testableQuestion", "Final testable question", "Write one question that names both variables.", { full: true, rows: 4, placeholder: "How does… affect…?" })}
+      </div>${checkpoint("Can you collect numerical data to answer your question within the available time and materials?")}`,
+
+    hypothesis: () => `${heading("Predict with a reason", "Write a scientific hypothesis", "Your hypothesis is an evidence-based prediction. It is not a guess and it does not have to be correct.")}
+      ${guide("Use this structure", "If [IV is changed], then [DV will respond] because [scientific reason from research].", "H")}
+      <div class="form-grid">
+        ${field("hypothesis", "If–then prediction", "Predict the direction or pattern you expect.", { full: true, placeholder: "If…, then…" })}
+        ${field("scienceReason", "Scientific reason", "Explain why using a fact, concept, or mechanism from your research.", { full: true, placeholder: "This is expected because…" })}
+      </div>${checkpoint("Does your hypothesis predict what will happen and explain why?")}`,
+
+    variables: () => `${heading("Design a fair test", "Name every variable and the control", "A fair investigation changes only the independent variable while measuring the dependent variable consistently.")}
+      ${guide("The fair-test rule", "CHANGE one factor · MEASURE one result · KEEP important conditions the same · COMPARE with a control or baseline.", "V")}
+      <div class="form-grid">
+        ${field("independentVariable", "Independent variable (IV)", "The one factor you change.", { placeholder: "Example: salt concentration" })}
+        ${field("ivLevels", "IV levels / treatments", "List the exact values or categories you will compare.", { placeholder: "0%, 1%, 2%, 3%" })}
+        ${field("dependentVariable", "Dependent variable (DV)", "The outcome you measure.", { placeholder: "Example: seedling height" })}
+        ${field("dvUnit", "Measurement unit", "Use a standard unit whenever possible.", { type: "text", placeholder: "cm, g, °C, pH, s…" })}
+        ${field("constants", "Controlled variables / constants", "List at least 4 things you will keep the same.", { rows: 4, placeholder: "Container size, light, time, volume…" })}
+        ${field("controlGroup", "Control or comparison group", "Describe the normal, untreated, or baseline condition.", { rows: 4, placeholder: "The control group will…" })}
+      </div>${checkpoint("If the result changes, can you reasonably say the IV caused it?")}`,
+
+    design: () => `${heading("Make it repeatable", "Plan the investigation", "Write enough detail that another Grade 8 scientist could repeat your investigation the same way.")}
+      ${guide("Use numbers", "Replace vague words like “some” or “for a while” with exact amounts, times, distances, temperatures, and instrument names.", "D")}
+      <div class="form-grid">
+        ${field("materials", "Materials and quantities", "Include amounts, sizes, and equipment.", { rows: 6, placeholder: "• 12 identical cups\n• 500 mL…" })}
+        ${field("measurementTool", "Measurement tool(s)", "Name the sensor or instrument and its precision if known.", { rows: 3, placeholder: "Digital balance to 0.01 g…" })}
+        ${field("procedure", "Numbered procedure", "Include setup, treatment, measuring, recording, and cleanup.", { full: true, rows: 9, placeholder: "1. Label…\n2. Measure…\n3. Repeat…" })}
+        ${field("sampleSize", "Sample size", "How many samples, organisms, or objects per condition?", { type: "text", placeholder: "5 seeds per condition" })}
+        ${field("durationLocation", "Duration and location", "When, where, and for how long will you investigate?", { placeholder: "7 days in the science lab…" })}
+      </div>${checkpoint("Could another student follow your procedure without asking you what to do next?")}`,
+
+    trials: () => `${heading("Trust the pattern", "Plan repeated trials", "Repeating measurements makes your evidence more reliable and helps reveal unusual results.")}
+      ${guide("Minimum target", "Use at least 3 trials for each treatment or condition unless your teacher approves a different design. More trials usually improve reliability.", "×3")}
+      <div class="form-grid">
+        ${field("trialCount", "Trials per condition", "Choose how many repeated measurements you will collect.", { type: "select", choices: ["3", "4", "5", "6"] })}
+        ${field("repeatReason", "Why are repeated trials important here?", "Connect repeats to reliability and variation.", { placeholder: "Repeated trials will…" })}
+        ${field("consistencyPlan", "How will every trial stay consistent?", "Explain timing, measuring method, equipment, and conditions.", { full: true, placeholder: "For every trial, I will…" })}
+      </div>${checkpoint("Does each IV level receive the same number of trials and the same measuring method?")}`,
+
+    safety: () => `${heading("Protect people and the environment", "Complete the safety check", "Your project must be safe, ethical, practical, and environmentally responsible before approval.")}
+      ${guide("Stop and ask first", "Teacher approval is required before using chemicals, heat, electricity, microorganisms, sharp tools, human participants, vertebrate animals, or natural samples.", "!")}
+      <div class="form-grid">
+        ${field("risks", "Possible hazards or ethical concerns", "Include spills, allergies, cuts, heat, electricity, organisms, people, and environmental impact.", { rows: 5, placeholder: "Possible risk → who/what could be harmed" })}
+        ${field("precautions", "Safety precautions", "Match each risk with a specific control measure and needed PPE.", { rows: 5, placeholder: "Risk → precaution" })}
+        ${field("disposal", "Cleanup and disposal plan", "Explain how materials and samples will be cleaned up without harming drains, soil, or organisms.", { full: true })}
+        ${field("livingThings", "Does the project involve people, animals, plants, microorganisms, food, or body fluids?", "Choose Yes if any living or once-living material is involved.", { type: "select", choices: ["No", "Yes — plants or food", "Yes — microorganisms or environmental samples", "Yes — people or personal data", "Yes — vertebrate animals", "Unsure"] })}
+        ${field("specialPermission", "Special permission or supervision needed", "If yes or unsure, explain. Your teacher makes the final decision.", { full: true, required: false, placeholder: "Teacher supervision is needed for…" })}
+      </div>${checkpoint("Have you reduced every risk and planned disposal that does not create a new environmental problem?")}`,
+
+    approval: approvalHTML,
+    data: dataHTML,
+
+    analysis: () => `${heading("Turn data into evidence", "Analyze patterns—not just numbers", "Organize your results, make an appropriate graph, and explain what the evidence shows.")}
+      ${guide("CER thinking", "CLAIM: answer the question · EVIDENCE: use exact data · REASONING: explain the science connecting the evidence to the claim.", "A")}
+      <div class="form-grid">
+        ${field("mainPattern", "Main pattern or trend", "Describe what increased, decreased, stayed similar, peaked, or varied.", { full: true })}
+        ${field("numberEvidence", "Best numerical evidence", "Compare at least two values, averages, or differences and include units.", { full: true, placeholder: "At…, the average was… compared with…" })}
+        ${field("graphPlan", "Graph choice and labels", "Name the graph type, X-axis, Y-axis with unit, and title.", { placeholder: "Bar graph; X = …; Y = … (unit); title = …" })}
+        ${field("anomalies", "Anomalies / unusual results", "Identify unexpected values and possible causes. Do not secretly delete them.", { required: false })}
+        ${field("limitations", "Limitations and uncertainty", "Explain at least one factor that may affect confidence in the result.", { full: true })}
+      </div>${checkpoint("Did you support every claim with actual measurements, not personal opinion?")}`,
+
+    finish: () => `${heading("Communicate what you learned", "Write an evidence-based conclusion", "Finish the scientific explanation before designing the display board. Your conclusion should answer the question with evidence—not simply repeat the results.")}
+      ${guide("A strong conclusion", "Answers the testable question, cites numerical evidence, explains the science, evaluates the hypothesis, and suggests one realistic improvement.", "C")}
+      <div class="form-grid">
+        ${field("claimConclusion", "Conclusion / answer to the question", "State the main finding clearly.", { full: true })}
+        ${field("hypothesisResult", "Was the hypothesis supported?", "Supported does not mean “proved.”", { type: "select", choices: ["Choose one…", "Supported by the data", "Partly supported", "Not supported by the data"] })}
+        ${field("scienceExplanation", "Scientific explanation", "Explain why the observed pattern may have occurred.")}
+        ${field("improvements", "Improvements and next investigation", "Name a specific design improvement and a useful follow-up question.")}
+        ${field("realWorldConnection", "Environmental significance", "What could this result mean for people, ecosystems, or sustainable choices?", { full: true })}
+      </div>${checkpoint("Does your conclusion answer the question and support every claim with exact data and scientific reasoning?")}`,
+
+    display: () => `${heading("Tell the scientific story", "Plan your display board", "Arrange information so a visitor can understand the problem, investigation, evidence, and conclusion in less than two minutes.")}
+      ${guide("Make evidence the hero", "Use short text, large headings, labeled photographs, one clean data table, and a graph large enough to read from about one meter away.", "▦")}
+      <div class="display-board-preview" aria-label="Suggested three-panel display board layout">
+        <div class="board-panel board-left"><span>LEFT PANEL</span><strong>Why & What</strong><p data-preview-field="leftPanelPlan">${escapeHTML(value("leftPanelPlan") || "Problem · Background · Question · Hypothesis · Variables")}</p></div>
+        <div class="board-panel board-center"><span>CENTER PANEL</span><strong data-preview-field="finalDisplayTitle">${escapeHTML(value("finalDisplayTitle") || "PROJECT TITLE")}</strong><p data-preview-field="centerPanelPlan">${escapeHTML(value("centerPanelPlan") || "Procedure · Photos · Data Table · Main Graph")}</p></div>
+        <div class="board-panel board-right"><span>RIGHT PANEL</span><strong>So What?</strong><p data-preview-field="rightPanelPlan">${escapeHTML(value("rightPanelPlan") || "Analysis · Conclusion · Environmental Significance · Improvements · Sources")}</p></div>
+      </div>
+      <div class="display-rules">
+        <div><strong>Readable</strong><span>Large title and headings; body text readable at arm's length.</span></div>
+        <div><strong>Visual</strong><span>Use graphs, tables, diagrams, and labeled evidence—not decoration only.</span></div>
+        <div><strong>Balanced</strong><span>Leave white space and align sections so the board does not feel crowded.</span></div>
+      </div>
+      <div class="form-grid">
+        ${field("finalDisplayTitle", "Final display title", "Keep it short, specific, and scientific.", { full: true, type: "text", placeholder: "Effect of… on…" })}
+        ${field("keyMessage", "One-sentence key message", "What is the single most important idea visitors should remember?", { full: true, placeholder: "The evidence shows that…" })}
+        ${field("leftPanelPlan", "Left panel: Why and what", "Plan the problem, background, question, hypothesis, and variables.", { rows: 5 })}
+        ${field("centerPanelPlan", "Center panel: What you did and found", "Plan the procedure, photographs, raw-data summary, and main graph.", { rows: 5 })}
+        ${field("rightPanelPlan", "Right panel: What it means", "Plan the analysis, conclusion, significance, improvements, and sources.", { rows: 5 })}
+        ${field("visualEvidence", "Visual evidence plan", "List the graph, table, photographs, diagram, or model you will include and why each one helps.", { rows: 5 })}
+        ${field("displayMaterials", "Materials and layout notes", "Board size, printed pages, mounting paper, labels, models, QR code, or other approved materials.", { full: true, required: false })}
+        <div class="field full" data-field-wrap="displayReady"><span class="field-label">Final display checklist <span class="required">*</span></span><span class="field-help">Check only when the plan includes all essential sections.</span>
+          <label class="check-row"><input type="checkbox" data-field="displayReady" ${value("displayReady") ? "checked" : ""}><span>My board plan includes a title, problem, background, question, hypothesis, variables, procedure, safety, data table, labeled graph, analysis, conclusion, environmental significance, improvements, sources, and acknowledgments.</span></label><span class="field-error">Confirm that every required display section is included.</span>
+        </div>
+      </div>
+      <div class="checkpoint-box"><h3>Display board checkpoint</h3><p>Can a visitor follow the scientific story from left to right and understand your evidence quickly?</p><div class="checkpoint-actions"><button class="button button-primary button-small" type="button" data-action="check-step">Check my display plan</button><button class="button button-quiet button-small" type="button" data-action="print-display">Print display blueprint</button></div></div>`
+  };
+  return sections[id]();
+}
+
+function approvalHTML() {
+  const planningReady = preApprovalReady();
+  const attested = Boolean(value("studentAttestation"));
+  const decision = value("teacherDecision") || "Pending";
+  const phase2 = planningReady && attested;
+  return `${heading("The proposal gate", "Stop here before collecting data", "No experiment begins until the topic and plan are complete, the student signs the readiness statement, and the teacher records a decision.")}
+    <div class="approval-roadmap">
+      <div class="approval-phase ${planningReady ? "done" : "current"}"><span class="phase-number">1</span><h3>Complete the plan</h3><p>Finish checkpoints 1–9 and correct missing details.</p></div>
+      <div class="approval-phase ${attested ? "done" : planningReady ? "current" : ""}"><span class="phase-number">2</span><h3>Student submits</h3><p>Confirm the work, then print or save the proposal.</p></div>
+      <div class="approval-phase ${decision === "Approved" ? "done" : phase2 ? "current" : ""}"><span class="phase-number">3</span><h3>Teacher decides</h3><p>Approved unlocks data collection. Revise keeps it locked.</p></div>
+    </div>
+    <div class="readiness-panel">
+      <div class="readiness-list">
+        <h3>Proposal readiness</h3>
+        ${planningSteps().map((s, i) => `<div class="ready-row ${stepComplete(s) ? "done" : ""}"><span>${i + 1}. ${escapeHTML(s.title)}</span><span class="ready-tag">${stepComplete(s) ? "Ready ✓" : "Needs work"}</span></div>`).join("")}
+        <div class="checkpoint-box">
+          <label class="check-row"><input type="checkbox" data-field="studentAttestation" ${attested ? "checked" : ""} ${planningReady ? "" : "disabled"}><span>I confirm that this proposal is my work, my sources are recorded, and I will not begin until my teacher approves it.</span></label>
+          <div class="checkpoint-actions"><button class="button button-quiet button-small" type="button" data-action="print">Print proposal</button><button class="button button-primary button-small" type="button" data-action="go-missing">${planningReady ? "Review my plan" : "Go to first missing step"}</button></div>
+        </div>
+      </div>
+      <div class="teacher-box ${phase2 ? "" : "locked"}">
+        <h3>Teacher decision</h3>
+        <p class="field-help">Teacher use: review the printed or on-screen plan, especially variables, repeated trials, safety, and disposal.</p>
+        ${field("teacherDecision", "Decision", "Select only after reviewing the full proposal.", { type: "select", choices: ["Pending", "Approved", "Revision requested"], required: false })}
+        ${field("teacherName", "Teacher name", "Required for an approval decision.", { type: "text", required: false, placeholder: "Teacher name" })}
+        ${field("approvalDate", "Decision date", "", { type: "date", required: false })}
+        ${field("teacherFeedback", "Feedback / required revisions", "Be specific about what must change before approval.", { required: false, rows: 4 })}
+        <p class="approval-status ${decision === "Approved" ? "approved" : decision === "Revision requested" ? "revision" : ""}">${decision === "Approved" ? "✓ APPROVED — Data collection is unlocked." : decision === "Revision requested" ? "↻ REVISION REQUIRED — Data collection remains locked." : "WAITING FOR TEACHER REVIEW — Data collection is locked."}</p>
+      </div>
+    </div>`;
+}
+
+function hasUsableData() {
+  return state.dataRows.some(row => row.condition.trim() && row.trials.some(v => String(v).trim() !== ""));
+}
+
+function dataHTML() {
+  if (!isApproved()) return lockedHTML();
+  const count = Number(value("trialCount")) || 3;
+  normalizeTrialCount(count);
+  const trialHeaders = Array.from({ length: count }, (_, i) => `<th>Trial ${i + 1}</th>`).join("");
+  const rows = state.dataRows.map((row, rowIndex) => {
+    const inputs = row.trials.map((trial, trialIndex) => `<td><input type="number" step="any" inputmode="decimal" aria-label="${escapeAttr(row.condition || `Condition ${rowIndex + 1}`)} trial ${trialIndex + 1}" data-row="${rowIndex}" data-trial="${trialIndex}" value="${escapeAttr(trial)}"></td>`).join("");
+    return `<tr><td><input type="text" aria-label="Condition ${rowIndex + 1}" data-condition="${rowIndex}" value="${escapeAttr(row.condition)}" placeholder="Treatment / level"></td>${inputs}<td data-average="${rowIndex}">${calculateAverage(row.trials)}</td><td><button class="button button-danger button-small" type="button" data-remove-row="${rowIndex}" aria-label="Remove condition ${rowIndex + 1}">×</button></td></tr>`;
+  }).join("");
+  return `${heading("Approved investigation", "Record your raw data", "Enter measurements exactly as observed. Keep the unit consistent, and never change a result just because it looks unusual.")}
+    ${guide("Approved plan", `Teacher decision: Approved${value("teacherName") ? ` by ${escapeHTML(value("teacherName"))}` : ""}. You planned ${count} trials per condition.`, "✓")}
+    <div class="data-table-wrap"><table class="data-table"><thead><tr><th>IV condition / level</th>${trialHeaders}<th>Average</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>
+    <div class="data-actions"><span class="average-note">Averages update automatically. Record the DV in ${escapeHTML(value("dvUnit") || "your chosen unit")}.</span><button class="button button-quiet button-small" type="button" data-action="add-row">+ Add condition</button></div>
+    <div class="form-grid" style="margin-top:1.2rem">${field("dataObservations", "Qualitative observations", "Record colors, odors, textures, behavior, weather, equipment issues, or other useful non-numerical evidence.", { full: true, rows: 5 })}</div>
+    ${checkpoint("Did you record all trials, units, dates/conditions, and unexpected observations honestly?")}`;
+}
+
+function lockedHTML() {
+  return `<div class="locked-stage"><div class="lock-symbol" aria-hidden="true">◇</div><h2>Approval comes first</h2><p>Complete checkpoints 1–9 and obtain an <strong>Approved</strong> teacher decision. This protects students, strengthens the investigation, and prevents unusable data.</p><button class="button button-primary" type="button" data-action="go-approval">Open proposal approval</button></div>`;
+}
+
+function normalizeTrialCount(count) {
+  state.dataRows.forEach(row => {
+    while (row.trials.length < count) row.trials.push("");
+    if (row.trials.length > count) row.trials = row.trials.slice(0, count);
+  });
+}
+
+function calculateAverage(trials) {
+  const nums = trials.map(Number).filter((n, i) => String(trials[i]).trim() !== "" && Number.isFinite(n));
+  if (!nums.length) return "—";
+  return (nums.reduce((sum, n) => sum + n, 0) / nums.length).toFixed(2).replace(/\.00$/, "");
+}
+
+function bindInputs() {
+  planner.querySelectorAll("[data-field]").forEach(control => {
+    const name = control.dataset.field;
+    const handler = () => {
+      state.fields[name] = control.type === "checkbox" ? control.checked : control.value;
+      control.closest(".field")?.classList.remove("missing");
+      persist();
+      updateProgress();
+      renderNav();
+
+      const preview = planner.querySelector(`[data-preview-field="${name}"]`);
+      if (preview) preview.textContent = control.value || "Add your plan here";
+
+      if (["teacherDecision", "studentAttestation", "trialCount"].includes(name)) {
+        if (name === "teacherDecision" && control.value === "Approved" && !String(value("teacherName")).trim()) {
+          state.fields.teacherDecision = "Pending";
+          setFooter("Add the teacher name before approving.", "error");
+        }
+        render();
+      }
+    };
+    control.addEventListener(control.tagName === "SELECT" || control.type === "checkbox" ? "change" : "input", handler);
+  });
+
+  planner.querySelectorAll("[data-condition]").forEach(input => {
+    input.addEventListener("input", () => {
+      state.dataRows[Number(input.dataset.condition)].condition = input.value;
+      persist();
+    });
+  });
+  planner.querySelectorAll("[data-trial]").forEach(input => {
+    input.addEventListener("input", () => {
+      const r = Number(input.dataset.row);
+      state.dataRows[r].trials[Number(input.dataset.trial)] = input.value;
+      const avg = planner.querySelector(`[data-average="${r}"]`);
+      if (avg) avg.textContent = calculateAverage(state.dataRows[r].trials);
+      persist();
+      updateProgress();
+    });
+  });
+}
+
+function bindSpecialActions() {
+  planner.querySelector('[data-action="check-step"]')?.addEventListener("click", checkCurrentStep);
+  planner.querySelector('[data-action="print"]')?.addEventListener("click", printProposal);
+  planner.querySelector('[data-action="print-display"]')?.addEventListener("click", printDisplayPlan);
+  planner.querySelector('[data-action="go-approval"]')?.addEventListener("click", () => goToStep(approvalStepIndex()));
+  planner.querySelector('[data-action="go-missing"]')?.addEventListener("click", () => {
+    const missing = planningSteps().findIndex(s => !stepComplete(s));
+    goToStep(missing >= 0 ? missing : 0);
+  });
+  planner.querySelectorAll("[data-topic-starter]").forEach(button => button.addEventListener("click", () => {
+    const idea = button.dataset.topicStarter;
+    const current = String(value("possibleTopics")).trim();
+    const count = current ? current.split("\n").filter(Boolean).length + 1 : 1;
+    state.fields.possibleTopics = `${current}${current ? "\n" : ""}${count}. ${idea}`;
+    if (!filled("selectedTopic")) state.fields.selectedTopic = idea;
+    persist(); render();
+  }));
+  planner.querySelector('[data-action="add-row"]')?.addEventListener("click", () => {
+    const count = Number(value("trialCount")) || 3;
+    state.dataRows.push({ condition: "", trials: Array(count).fill("") });
+    persist(); render();
+  });
+  planner.querySelectorAll("[data-remove-row]").forEach(button => button.addEventListener("click", () => {
+    if (state.dataRows.length <= 1) return;
+    state.dataRows.splice(Number(button.dataset.removeRow), 1);
+    persist(); render();
+  }));
+
+  const teacherBox = planner.querySelector(".teacher-box.locked");
+  teacherBox?.querySelectorAll("input, select, textarea").forEach(control => control.disabled = true);
+}
+
+function checkCurrentStep() {
+  const step = steps[state.currentStep];
+  const missing = step.required.filter(f => !filled(f));
+  planner.querySelectorAll(".missing").forEach(el => el.classList.remove("missing"));
+  if (!missing.length && (step.id !== "data" || hasUsableData())) {
+    setFooter("Checkpoint complete — nice scientific planning.", "success");
+    renderNav(); updateProgress();
+    return true;
+  }
+  missing.forEach(name => planner.querySelector(`[data-field-wrap="${name}"]`)?.classList.add("missing"));
+  if (step.id === "data" && !hasUsableData()) setFooter("Add at least one condition and measurement.", "error");
+  else setFooter(`Complete ${missing.length} highlighted ${missing.length === 1 ? "field" : "fields"}.`, "error");
+  planner.querySelector(".missing input, .missing textarea, .missing select")?.focus();
+  return false;
+}
+
+function setFooter(message, type = "") {
+  footerMessage.textContent = message;
+  footerMessage.className = `footer-center ${type}`;
+}
+
+function goToStep(index) {
+  if (index < 0 || index >= steps.length || isLocked(index)) return;
+  state.currentStep = index;
+  persist(); render();
+  document.getElementById("workspace").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+backButton.addEventListener("click", () => goToStep(state.currentStep - 1));
+nextButton.addEventListener("click", () => {
+  if (state.currentStep === approvalStepIndex() && !isApproved()) return;
+  goToStep(state.currentStep + 1);
+});
+document.getElementById("printButton").addEventListener("click", printProposal);
+
+function printProposal() {
+  buildPrintSummary();
+  window.print();
+}
+
+function printDisplayPlan() {
+  buildDisplaySummary();
+  window.print();
+}
+
+function line(label, fieldName, fallback = "Not yet completed") {
+  return `<p><span class="print-label">${label}:</span> ${escapeHTML(value(fieldName) || fallback)}</p>`;
+}
+
+function buildPrintSummary() {
+  const decision = value("teacherDecision") || "Pending";
+  document.getElementById("printSummary").innerHTML = `
+    <div class="print-header"><div><p>Grade 8 · Environment & Sustainability</p><h1>Science Fair Project Proposal</h1></div><p>Proposal status: <strong>${escapeHTML(decision)}</strong></p></div>
+    <div class="print-meta"><div><span>Student</span><strong>${escapeHTML(value("studentName") || "________________")}</strong></div><div><span>Class</span><strong>${escapeHTML(value("classSection") || "Grade 8")}</strong></div><div><span>Project</span><strong>${escapeHTML(value("projectTitle") || "Untitled")}</strong></div></div>
+    <section class="print-section"><h2>1 · Topic selection</h2>${line("Sustainability area", "sustainabilityArea")}${line("Topics considered", "possibleTopics")}${line("Selected topic", "selectedTopic")}${line("Reason for choosing", "topicReason")}</section>
+    <section class="print-section"><h2>2 · Environmental problem & research</h2>${line("Problem", "problemStatement")}${line("Local connection", "localConnection")}${line("Key research facts", "researchFacts")}${line("Sources", "sources")}${line("Research gap", "researchGap")}</section>
+    <section class="print-section"><h2>3 · Question & hypothesis</h2>${line("Testable question", "testableQuestion")}${line("Hypothesis", "hypothesis")}${line("Scientific reason", "scienceReason")}</section>
+    <section class="print-section"><h2>4 · Variables & fair test</h2>${line("Independent variable", "independentVariable")}${line("IV levels", "ivLevels")}${line("Dependent variable", "dependentVariable")}${line("Unit", "dvUnit")}${line("Constants", "constants")}${line("Control/comparison", "controlGroup")}</section>
+    <section class="print-section"><h2>5 · Investigation design</h2>${line("Materials", "materials")}${line("Measurement tools", "measurementTool")}${line("Procedure", "procedure")}${line("Sample size", "sampleSize")}${line("Duration & location", "durationLocation")}${line("Trials per condition", "trialCount")}${line("Consistency plan", "consistencyPlan")}</section>
+    <section class="print-section"><h2>6 · Safety & responsibility</h2>${line("Risks", "risks")}${line("Precautions", "precautions")}${line("Cleanup/disposal", "disposal")}${line("Living things / people", "livingThings")}${line("Permission or supervision", "specialPermission", "None stated")}</section>
+    <section class="print-section print-approval"><h2>Teacher approval gate</h2>${line("Decision", "teacherDecision", "Pending")}${line("Teacher", "teacherName", "________________")}${line("Date", "approvalDate", "________________")}${line("Feedback / revisions", "teacherFeedback", "None")}
+      <div class="print-signature"><div class="signature-line">Student signature</div><div class="signature-line">Teacher signature</div></div>
+    </section>`;
+}
+
+function buildDisplaySummary() {
+  document.getElementById("printSummary").innerHTML = `
+    <div class="print-header"><div><p>Grade 8 · Environment & Sustainability</p><h1>Science Fair Display Blueprint</h1></div><p>Student: <strong>${escapeHTML(value("studentName") || "________________")}</strong></p></div>
+    <div class="print-meta"><div><span>Display title</span><strong>${escapeHTML(value("finalDisplayTitle") || "Untitled")}</strong></div><div><span>Project</span><strong>${escapeHTML(value("projectTitle") || value("selectedTopic") || "Untitled")}</strong></div><div><span>Key message</span><strong>${escapeHTML(value("keyMessage") || "Not yet completed")}</strong></div></div>
+    <div class="print-display-grid">
+      <section><h2>Left panel · Why & What</h2><p>${escapeHTML(value("leftPanelPlan") || "Problem · Background · Question · Hypothesis · Variables")}</p></section>
+      <section><h2>Center panel · Evidence</h2><p>${escapeHTML(value("centerPanelPlan") || "Procedure · Photos · Data Table · Main Graph")}</p></section>
+      <section><h2>Right panel · So What?</h2><p>${escapeHTML(value("rightPanelPlan") || "Analysis · Conclusion · Significance · Improvements · Sources")}</p></section>
+    </div>
+    <section class="print-section"><h2>Visual evidence plan</h2><p>${escapeHTML(value("visualEvidence") || "Not yet completed")}</p></section>
+    <section class="print-section"><h2>Materials and layout notes</h2><p>${escapeHTML(value("displayMaterials") || "Not yet completed")}</p></section>
+    <section class="print-section"><h2>Final checklist</h2><p>${value("displayReady") ? "✓ All required display sections are included in the plan." : "□ Review and complete all required display sections."}</p></section>`;
+}
+
+function escapeHTML(input) {
+  return String(input ?? "").replace(/[&<>'"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[c]));
+}
+function escapeAttr(input) { return escapeHTML(input).replace(/`/g, "&#96;"); }
+
+render();
+
+    </script>
+  </body>
+</html>
