@@ -302,6 +302,20 @@ input:hover, textarea:hover, select:hover { border-color: #97aca4; }
 .display-rules strong { display: block; color: var(--green-dark); font-size: 0.8rem; }
 .display-rules span { color: var(--muted); font-size: 0.72rem; }
 
+.self-score { display: grid; grid-template-columns: auto 1fr; gap: 1rem; align-items: center; margin: 0 0 1.2rem; padding: 1rem; border-radius: 15px; background: var(--mint-2); border: 1px solid #b9d9c9; }
+.self-score-number { display: grid; place-items: center; min-width: 92px; min-height: 72px; padding: 0.6rem; border-radius: 14px; color: white; background: var(--green); font: 700 1.5rem Georgia, serif; }
+.self-score h3 { margin: 0 0 0.25rem; font: 700 1.15rem Georgia, serif; }
+.self-score p { margin: 0.15rem 0; color: var(--muted); font-size: 0.78rem; }
+.self-rubric { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; margin-bottom: 1.2rem; }
+.rubric-item { padding: 0.9rem; border: 1px solid var(--line); border-radius: 13px; background: #fff; }
+.rubric-item h3 { margin: 0 0 0.25rem; font-size: 0.9rem; }
+.rubric-item p { min-height: 2.5em; margin: 0 0 0.65rem; color: var(--muted); font-size: 0.74rem; }
+.rubric-item select { width: 100%; padding: 0.65rem; border: 1px solid #b9c9c3; border-radius: 9px; background: #fff; color: var(--ink); font: inherit; }
+.rubric-key { display: flex; flex-wrap: wrap; gap: 0.45rem 0.9rem; margin: 0 0 1rem; color: var(--muted); font-size: 0.75rem; }
+.print-rubric-table { width: 100%; border-collapse: collapse; }
+.print-rubric-table th, .print-rubric-table td { padding: 2.5mm; border: 1px solid #cbd3ce; text-align: left; vertical-align: top; }
+@media (max-width: 760px) { .self-rubric { grid-template-columns: 1fr; } .self-score { grid-template-columns: 1fr; } .self-score-number { min-width: 0; } }
+
 .approval-roadmap { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 0.75rem; margin-bottom: 1.2rem; }
 .approval-phase { padding: 1rem; border: 1px solid var(--line); border-radius: 14px; background: #fff; }
 .approval-phase.done { border-color: #9ac8ad; background: var(--mint-2); }
@@ -476,6 +490,17 @@ input:hover, textarea:hover, select:hover { border-color: #97aca4; }
     <script>
 const STORAGE_KEY = "grade8-sustainability-planner-v2";
 
+const SELF_RUBRIC = [
+  { field: "rubricPurpose", title: "Problem & purpose", success: "The environmental problem is clear, focused, and important." },
+  { field: "rubricResearch", title: "Background science", success: "Research is accurate and sources are recorded." },
+  { field: "rubricQuestion", title: "Question, hypothesis & variables", success: "The question is testable and the variables match the hypothesis." },
+  { field: "rubricMethod", title: "Method, trials & safety", success: "The procedure is fair, repeatable, safe, and uses enough trials." },
+  { field: "rubricEvidence", title: "Data & graph", success: "Data are complete, labeled, accurate, and shown in a suitable graph." },
+  { field: "rubricConclusion", title: "Analysis & conclusion", success: "The conclusion answers the question using numerical evidence." },
+  { field: "rubricSustainability", title: "Environmental connection", success: "The project explains why the findings matter for sustainability." },
+  { field: "rubricDisplay", title: "Display & communication", success: "The board is clear, visual, organized, and easy to understand." }
+];
+
 const steps = [
   { id: "topic", title: "Choose a topic", stage: "Explore", icon: "01", required: ["sustainabilityArea", "possibleTopics", "selectedTopic", "topicReason", "topicFeasible"] },
   { id: "problem", title: "Environmental problem", stage: "Discover", icon: "02", required: ["studentName", "projectTitle", "problemStatement", "localConnection"] },
@@ -490,7 +515,8 @@ const steps = [
   { id: "data", title: "Collect data", stage: "Investigate", icon: "11", required: ["dataObservations"] },
   { id: "analysis", title: "Analyze results", stage: "Explain", icon: "12", required: ["mainPattern", "numberEvidence", "graphPlan", "limitations"] },
   { id: "finish", title: "Conclusion", stage: "Communicate", icon: "13", required: ["claimConclusion", "hypothesisResult", "scienceExplanation", "improvements", "realWorldConnection"] },
-  { id: "display", title: "Plan the display board", stage: "Present", icon: "14", required: ["finalDisplayTitle", "keyMessage", "leftPanelPlan", "centerPanelPlan", "rightPanelPlan", "visualEvidence", "displayReady"] }
+  { id: "display", title: "Plan the display board", stage: "Present", icon: "14", required: ["finalDisplayTitle", "keyMessage", "leftPanelPlan", "centerPanelPlan", "rightPanelPlan", "visualEvidence", "displayReady"] },
+  { id: "selfAssessment", title: "Self-assessment & success", stage: "Reflect", icon: "15", required: [...SELF_RUBRIC.map(item => item.field), "selfProud", "selfImprove", "selfNextStep", "selfCheckComplete"] }
 ];
 
 const initialState = {
@@ -814,9 +840,41 @@ function contentFor(id) {
           <label class="check-row"><input type="checkbox" data-field="displayReady" ${value("displayReady") ? "checked" : ""}><span>My board plan includes a title, problem, background, question, hypothesis, variables, procedure, safety, data table, labeled graph, analysis, conclusion, environmental significance, improvements, sources, and acknowledgments.</span></label><span class="field-error">Confirm that every required display section is included.</span>
         </div>
       </div>
-      <div class="checkpoint-box"><h3>Display board checkpoint</h3><p>Can a visitor follow the scientific story from left to right and understand your evidence quickly?</p><div class="checkpoint-actions"><button class="button button-primary button-small" type="button" data-action="check-step">Check my display plan</button><button class="button button-quiet button-small" type="button" data-action="print-display">Print display blueprint</button></div></div>`
+      <div class="checkpoint-box"><h3>Display board checkpoint</h3><p>Can a visitor follow the scientific story from left to right and understand your evidence quickly?</p><div class="checkpoint-actions"><button class="button button-primary button-small" type="button" data-action="check-step">Check my display plan</button><button class="button button-quiet button-small" type="button" data-action="print-display">Print display blueprint</button></div></div>`,
+
+    selfAssessment: selfAssessmentHTML
   };
   return sections[id]();
+}
+
+function selfAssessmentHTML() {
+  const scores = SELF_RUBRIC.map(item => Number(value(item.field)) || 0);
+  const answered = scores.filter(Boolean).length;
+  const total = scores.reduce((sum, score) => sum + score, 0);
+  const maximum = SELF_RUBRIC.length * 4;
+  const percent = answered ? Math.round((total / maximum) * 100) : 0;
+  const status = answered < SELF_RUBRIC.length ? "Complete all 8 areas" : percent >= 88 ? "Excellent — Ready to present" : percent >= 75 ? "Successful — Ready" : percent >= 60 ? "Almost ready — Improve weak areas" : "Keep improving — Use the rubric";
+  const options = item => ["Choose one…", "4 — Strong", "3 — Ready", "2 — Improve", "1 — Beginning"].map((label, index) => {
+    const score = index === 0 ? "" : String(5 - index);
+    return `<option value="${score}" ${String(value(item.field)) === score ? "selected" : ""}>${label}</option>`;
+  }).join("");
+  return `${heading("Look back and improve", "Self-assessment & success check", "Use the rubric honestly. This is your chance to improve the project before final submission or presentation.")}
+    ${guide("This is not the teacher grade", "Your self-assessment helps you notice strengths and fix weak areas. Your teacher will assess the final project separately.", "✓")}
+    <div class="self-score" aria-live="polite">
+      <div class="self-score-number">${percent}%</div>
+      <div><h3>${status}</h3><p>${total} of ${maximum} points · ${answered} of ${SELF_RUBRIC.length} areas checked</p><p>Success target: aim for Level 3 or 4 in every area.</p></div>
+    </div>
+    <div class="rubric-key"><strong>Levels:</strong><span>4 = Strong</span><span>3 = Ready</span><span>2 = Improve</span><span>1 = Beginning</span></div>
+    <div class="self-rubric">
+      ${SELF_RUBRIC.map((item, index) => `<div class="rubric-item" data-field-wrap="${item.field}"><h3>${index + 1}. ${item.title}</h3><p>${item.success}</p><label><span class="field-label">My level <span class="required">*</span></span><select data-field="${item.field}" aria-label="${item.title} self-assessment">${options(item)}</select></label><span class="field-error">Choose a level.</span></div>`).join("")}
+    </div>
+    <div class="form-grid">
+      ${field("selfProud", "What am I proud of?", "Name one specific strength in your work.", { placeholder: "I am proud that…" })}
+      ${field("selfImprove", "What should I improve?", "Use the lowest rubric level to choose one important improvement.", { placeholder: "I need to improve…" })}
+      ${field("selfNextStep", "My next action", "Write one clear action you will complete before presenting.", { full: true, placeholder: "Before I present, I will…" })}
+      <div class="field full" data-field-wrap="selfCheckComplete"><span class="field-label">Final honesty check <span class="required">*</span></span><span class="field-help">Check after you have read all eight rubric areas.</span><label class="check-row"><input type="checkbox" data-field="selfCheckComplete" ${value("selfCheckComplete") ? "checked" : ""}><span>I reviewed my project honestly and I know what to improve before the final presentation.</span></label><span class="field-error">Complete the final honesty check.</span></div>
+    </div>
+    <div class="checkpoint-box"><h3>Final success checkpoint</h3><p>Is every area at Level 3 or 4, or have you written a clear plan to improve it?</p><div class="checkpoint-actions"><button class="button button-primary button-small" type="button" data-action="check-step">Check my self-assessment</button><button class="button button-quiet button-small" type="button" data-action="print-self">Print / Save PDF</button></div></div>`;
 }
 
 function approvalHTML() {
@@ -902,7 +960,7 @@ function bindInputs() {
       const preview = planner.querySelector(`[data-preview-field="${name}"]`);
       if (preview) preview.textContent = control.value || "Add your plan here";
 
-      if (["teacherDecision", "studentAttestation", "trialCount"].includes(name)) {
+      if (["teacherDecision", "studentAttestation", "trialCount"].includes(name) || name.startsWith("rubric")) {
         if (name === "teacherDecision" && control.value === "Approved" && !String(value("teacherName")).trim()) {
           state.fields.teacherDecision = "Pending";
           setFooter("Add the teacher name before approving.", "error");
@@ -935,6 +993,7 @@ function bindSpecialActions() {
   planner.querySelector('[data-action="check-step"]')?.addEventListener("click", checkCurrentStep);
   planner.querySelector('[data-action="print"]')?.addEventListener("click", printProposal);
   planner.querySelector('[data-action="print-display"]')?.addEventListener("click", printDisplayPlan);
+  planner.querySelector('[data-action="print-self"]')?.addEventListener("click", printSelfAssessment);
   planner.querySelector('[data-action="go-approval"]')?.addEventListener("click", () => goToStep(approvalStepIndex()));
   planner.querySelector('[data-action="go-missing"]')?.addEventListener("click", () => {
     const missing = planningSteps().findIndex(s => !stepComplete(s));
@@ -1008,6 +1067,11 @@ function printDisplayPlan() {
   window.print();
 }
 
+function printSelfAssessment() {
+  buildSelfAssessmentSummary();
+  window.print();
+}
+
 function line(label, fieldName, fallback = "Not yet completed") {
   return `<p><span class="print-label">${label}:</span> ${escapeHTML(value(fieldName) || fallback)}</p>`;
 }
@@ -1026,6 +1090,19 @@ function buildPrintSummary() {
     <section class="print-section print-approval"><h2>Teacher approval gate</h2>${line("Decision", "teacherDecision", "Pending")}${line("Teacher", "teacherName", "________________")}${line("Date", "approvalDate", "________________")}${line("Feedback / revisions", "teacherFeedback", "None")}
       <div class="print-signature"><div class="signature-line">Student signature</div><div class="signature-line">Teacher signature</div></div>
     </section>`;
+}
+
+function buildSelfAssessmentSummary() {
+  const scores = SELF_RUBRIC.map(item => Number(value(item.field)) || 0);
+  const total = scores.reduce((sum, score) => sum + score, 0);
+  const maximum = SELF_RUBRIC.length * 4;
+  const percent = Math.round((total / maximum) * 100);
+  document.getElementById("printSummary").innerHTML = `
+    <div class="print-header"><div><p>Grade 8 · Environment & Sustainability</p><h1>Science Fair Self-Assessment</h1></div><p>Student: <strong>${escapeHTML(value("studentName") || "________________")}</strong></p></div>
+    <div class="print-meta"><div><span>Project</span><strong>${escapeHTML(value("projectTitle") || value("selectedTopic") || "Untitled")}</strong></div><div><span>Self-assessment score</span><strong>${total} / ${maximum}</strong></div><div><span>Success percentage</span><strong>${percent}%</strong></div></div>
+    <table class="print-rubric-table"><thead><tr><th>Rubric area</th><th>Success looks like</th><th>My level</th></tr></thead><tbody>${SELF_RUBRIC.map(item => `<tr><td><strong>${escapeHTML(item.title)}</strong></td><td>${escapeHTML(item.success)}</td><td>${escapeHTML(value(item.field) || "—")} / 4</td></tr>`).join("")}</tbody></table>
+    <section class="print-section"><h2>My reflection</h2>${line("What I am proud of", "selfProud")}${line("What I should improve", "selfImprove")}${line("My next action", "selfNextStep")}</section>
+    <section class="print-section"><h2>Final honesty check</h2><p>${value("selfCheckComplete") ? "✓ I reviewed my project honestly and know what to improve." : "□ Not yet completed."}</p></section>`;
 }
 
 function buildDisplaySummary() {
